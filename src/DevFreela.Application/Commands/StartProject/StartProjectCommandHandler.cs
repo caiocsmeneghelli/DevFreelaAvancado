@@ -15,19 +15,21 @@ namespace DevFreela.Application.Commands.StartProject
 {
     public class StartProjectCommandHandler : IRequestHandler<StartProjectCommand, Unit>
     {
-        private readonly IProjectRepository _projectRepository;
-        public StartProjectCommandHandler(IProjectRepository projectRepository)
+        private readonly IUnitOfWork _unitOfWork;
+
+        public StartProjectCommandHandler(IUnitOfWork unitOfWork)
         {
-            _projectRepository = projectRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<Unit> Handle(StartProjectCommand request, CancellationToken cancellationToken)
         {
-            var project = await _projectRepository.GetByIdAsync(request.Id);
+            var project = await _unitOfWork.Projects.GetByIdAsync(request.Id);
 
             project.Start();
 
-            await _projectRepository.StartAsync(project);
+            // utilizando Dapper
+            await _unitOfWork.Projects.StartAsync(project);
 
             return Unit.Value;
         }

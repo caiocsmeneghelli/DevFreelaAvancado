@@ -10,25 +10,25 @@ namespace DevFreela.Application.Commands.FinishProject
 {
     public class FinishProjectCommandHandler : IRequestHandler<FinishProjectCommand, bool>
     {
-        private readonly IProjectRepository _projectRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IPaymentService _paymentService;
-        public FinishProjectCommandHandler(IProjectRepository projectRepository, IPaymentService paymentService)
+        public FinishProjectCommandHandler(IUnitOfWork unitOfWork, IPaymentService paymentService)
         {
-            _projectRepository = projectRepository;
+            _unitOfWork = unitOfWork;
             _paymentService = paymentService;
         }
 
         public async Task<bool> Handle(FinishProjectCommand request, CancellationToken cancellationToken)
         {
-            var project = await _projectRepository.GetByIdAsync(request.Id);
-            
+            var project = await _unitOfWork.Projects.GetByIdAsync(request.Id);
+
             var paymentInfoDto = new PaymentInfoDTO(request.Id, request.CreditCardNumber, request.Cvv, request.ExpiresAt, request.FullName, project.TotalCost);
 
             _paymentService.ProcessPayment(paymentInfoDto);
 
             project.SetPaymentPending();
 
-            await _projectRepository.SaveChangesAsync();
+            await _unitOfWork.CompleteAsync();
 
             return true;
         }
