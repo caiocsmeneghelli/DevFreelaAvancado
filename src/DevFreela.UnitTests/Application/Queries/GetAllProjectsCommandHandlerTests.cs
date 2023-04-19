@@ -26,7 +26,6 @@ namespace DevFreela.UnitTests.Application.Queries
                     new Project("Nome Do Teste 3", "Descricao De Teste 3", 1, 2, 30000)
                 }
             };
-            var query = "Nome";
 
             var projectRepositoryMock = new Mock<IProjectRepository>();
             projectRepositoryMock.Setup(pr => pr.GetAllAsync(It.IsAny<string>(), It.IsAny<int>()).Result).Returns(projects);
