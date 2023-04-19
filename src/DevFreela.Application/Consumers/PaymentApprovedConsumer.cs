@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using DevFreela.Application.IntegrationEvents;
 using DevFreela.Core.Repositories;
+using DevFreela.Infrastructure.Persistence;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using RabbitMQ.Client;
@@ -65,13 +66,13 @@ namespace DevFreela.Application.Consumers
         {
             using (var scope = _serviceProvider.CreateScope())
             {
-                var projectRepository = scope.ServiceProvider.GetRequiredService<IProjectRepository>();
+                var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
 
-                var project = await projectRepository.GetByIdAsync(id);
+                var project = await unitOfWork.Projects.GetByIdAsync(id);
 
                 project.Finish();
 
-                await projectRepository.SaveChangesAsync();
+                await unitOfWork.CompleteAsync();
             }
         }
     }
