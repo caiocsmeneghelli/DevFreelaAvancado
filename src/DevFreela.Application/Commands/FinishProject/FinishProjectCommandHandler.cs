@@ -28,7 +28,7 @@ namespace DevFreela.Application.Commands.FinishProject
 
             project.SetPaymentPending();
 
-            await _unitOfWork.CompleteAsync();
+            await _unitOfWork.Projects.UpdateAsync(project);
 
             return true;
         }

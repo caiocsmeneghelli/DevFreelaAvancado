@@ -72,7 +72,7 @@ namespace DevFreela.Application.Consumers
 
                 project.Finish();
 
-                await unitOfWork.CompleteAsync();
+                await unitOfWork.Projects.UpdateAsync(project);
             }
         }
     }

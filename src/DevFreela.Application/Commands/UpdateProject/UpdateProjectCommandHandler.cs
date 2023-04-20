@@ -21,7 +21,7 @@ namespace DevFreela.Application.Commands.UpdateProject
 
             project.Update(request.Title, request.Description, request.TotalCost);
 
-            await _unitOfWork.CompleteAsync();
+            await _unitOfWork.Projects.UpdateAsync(project);
 
             return Unit.Value;
         }
